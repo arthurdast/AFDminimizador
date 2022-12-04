@@ -1,6 +1,8 @@
 import numpy as np
+import pandas as pd
 from manipularArquivo import *
 from removerRepetidos import *
+
 
 
 arquivo=manipularArquivo()
@@ -128,29 +130,52 @@ for tx,t in enumerate(transicoesQfinal, start=0):
     for ti in t:
         ti[0]= tx
 
-print("\n Transicoes Finais:")    
-
+print("\n Transicoes Finais:")   
+    
 
 estadosFinais= remove_repetidos(estadosFinais)
 estadosFinais= ['q'+str(i) for i in estadosFinais]   
 estadoInicialNovo= ['q'+str(i) for i in estadoInicialNovo]
+
+matrizFinal = np.full((nEstado,nEstado), 0)     
+
 for t in  transicoesQfinal:
-    for tt in t:        
+    for tt in t:                
         tt[0]='q'+str(tt[0])
         tt[1]= novoEstados[tt[1]]
         tt[1]='q'+str(tt[1])        
         tt[2]= alfabeto[tt[2]]        
-    if(tt[0] in estadosFinais):
+    if(tt[0] in estadosFinais):          
+         
+        x1=int((t[0][0])[1:])
+        x2=int((t[0][1])[1:])
+        y1=int((t[1][0])[1:])
+        y2=int((t[1][1])[1:])        
+        matrizFinal[x1][x2]=1                       
+        matrizFinal[y1][y2]=1     
+                       
         print (t," Estado Final",end="")
         if(tt[0] in estadoInicialNovo):
+            
             print ("e Estado Inicial")
         else:
             print(" ")
     else:        
+        x1=int((t[0][0])[1:])
+        x2=int((t[0][1])[1:])
+        y1=int((t[1][0])[1:])
+        y2=int((t[1][1])[1:])        
+        matrizFinal[x1][x2]=1                       
+        matrizFinal[y1][y2]=1       
+             
         print (t,end=" ")
         if(tt[0] in estadoInicialNovo):
             print ("Estado Inicial")
         else:
-            print(" ")
-            
-            
+            print(" ")        
+
+print("\n",matrizFinal)
+
+
+DF = pd.DataFrame(matrizFinal)
+DF.to_csv("tabelaParaVizualizacao.csv")
